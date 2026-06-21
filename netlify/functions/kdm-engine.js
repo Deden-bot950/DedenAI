@@ -1,6 +1,6 @@
 /* DedenAI — Function Server (API key tersembunyi di sini) */
 
-const MODEL = 'gemini-2.0-flash-exp';
+const MODEL = 'gemini-3.1-flash-image';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const CORS = {
   'Access-Control-Allow-Origin': '*',
