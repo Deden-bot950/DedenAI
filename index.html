@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#060B18"/>
+<title>DedenAI — Kreasi dengan AI Gratis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#060B18;--ink2:#0D1526;--ink3:#16213A;
+  --text:#EDF2FF;--muted:#6E7FA8;--faint:#2A3655;
+  --b1:#4F8EFF;--b2:#7C3FFF;--b3:#00D4FF;
+  --grad:linear-gradient(130deg,#4F8EFF 0%,#7C3FFF 60%,#00D4FF 120%);
+  --grad-s:linear-gradient(130deg,rgba(79,142,255,.15),rgba(124,63,255,.15));
+  --good:#2ECC8F;--bad:#FF5C7A;--gold:#FFB800;
+  --r:16px;--shadow:0 20px 60px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{min-height:100vh;overflow-x:hidden}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--ink);color:var(--text);
+  background-image:radial-gradient(ellipse 900px 600px at 100% -5%,rgba(79,142,255,.18),transparent 65%),
+                   radial-gradient(ellipse 700px 500px at 0% 30%,rgba(124,63,255,.14),transparent 60%);
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,.sora{font-family:'Sora',sans-serif}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input,textarea,select{font-family:inherit;outline:none}
+.hidden{display:none!important}
+
+/* ── LOGO SVG ── */
+.logo-svg{display:block}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  padding:32px;text-align:center;
+  background:radial-gradient(ellipse 800px 600px at 50% 10%,rgba(79,142,255,.22),transparent 60%),var(--ink);
+  transition:opacity .5s}
+.splash-logo{display:flex;flex-direction:column;align-items:center;gap:14px}
+.splash-icon{width:90px;height:90px;border-radius:26px;background:var(--grad);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 50px rgba(79,142,255,.45),0 0 100px rgba(124,63,255,.25);animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.splash-wordmark{font-family:'Sora';font-weight:800;font-size:36px;letter-spacing:-1.5px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.splash-tag{font-size:13px;color:var(--muted);letter-spacing:.5px}
+.splash-btn{padding:16px 36px;border-radius:40px;background:var(--grad);color:#fff;font-family:'Sora';font-weight:700;font-size:16px;
+  box-shadow:0 12px 32px rgba(79,142,255,.4);transition:transform .15s,box-shadow .15s;letter-spacing:-.3px}
+.splash-btn:active{transform:scale(.97);box-shadow:0 6px 16px rgba(79,142,255,.3)}
+.splash-ver{font-size:11px;color:var(--faint);letter-spacing:1px;text-transform:uppercase}
+
+/* ── AUTH ── */
+#auth{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px;max-width:480px;margin:0 auto}
+.auth-head{text-align:center;margin-bottom:32px}
+.auth-icon{width:64px;height:64px;border-radius:20px;background:var(--grad);display:grid;place-items:center;margin:0 auto 14px;
+  box-shadow:0 8px 28px rgba(79,142,255,.4)}
+.auth-name{font-family:'Sora';font-weight:800;font-size:28px;letter-spacing:-1px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.auth-sub{color:var(--muted);font-size:13px;margin-top:4px}
+
+.seg{display:flex;gap:4px;background:rgba(255,255,255,.05);padding:4px;border-radius:13px;border:1px solid var(--faint);margin-bottom:22px}
+.seg button{flex:1;padding:11px;border-radius:10px;background:transparent;color:var(--muted);font-family:'Sora';font-weight:700;font-size:14px;transition:.2s}
+.seg button.on{background:var(--grad);color:#fff}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:7px;letter-spacing:.3px;text-transform:uppercase}
+.input{width:100%;background:rgba(255,255,255,.05);border:1.5px solid var(--faint);border-radius:13px;
+  color:var(--text);padding:14px 16px;font-size:15px;transition:border-color .2s}
+.input:focus{border-color:var(--b1)}
+textarea.input{resize:vertical;min-height:90px;line-height:1.55}
+::placeholder{color:#3a4d70}
+select.input option{background:var(--ink2)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:13px;
+  font-family:'Sora';font-weight:700;font-size:15px;letter-spacing:-.3px;transition:transform .15s,opacity .2s}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--grad);color:#fff;box-shadow:0 10px 28px rgba(79,142,255,.35)}
+.btn-g{background:rgba(255,255,255,.06);color:var(--text);border:1.5px solid var(--faint)}
+.btn-sm{width:auto;padding:11px 18px;font-size:13px;border-radius:11px}
+.btn:disabled{opacity:.5;pointer-events:none}
+.row{display:flex;gap:10px}.row>*{flex:1}
+
+.note-box{background:rgba(79,142,255,.08);border:1px solid rgba(79,142,255,.2);border-radius:13px;padding:13px 14px;
+  font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:16px}
+
+/* ── MAIN ── */
+.app{max-width:520px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:14px 18px;
+  background:rgba(6,11,24,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06)}
+.top-logo{display:flex;align-items:center;gap:10px}
+.top-icon{width:36px;height:36px;border-radius:11px;background:var(--grad);display:grid;place-items:center;flex:0 0 auto;
+  box-shadow:0 4px 14px rgba(79,142,255,.35)}
+.top-name{font-family:'Sora';font-weight:800;font-size:18px;letter-spacing:-.5px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.spacer{flex:1}
+.u-chip{font-size:12px;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--faint);
+  padding:7px 13px;border-radius:30px;font-weight:600}
+
+.screen{padding:18px;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--b1);font-weight:700;margin-bottom:6px}
+.page-title{font-family:'Sora';font-size:24px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px}
+.page-desc{color:var(--muted);font-size:14px;line-height:1.55;margin-bottom:20px}
+
+/* ── HOME GRID ── */
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool{position:relative;overflow:hidden;border-radius:var(--r);padding:18px;background:rgba(255,255,255,.04);
+  border:1.5px solid var(--faint);text-align:left;transition:transform .15s,border-color .2s}
+.tool:active{transform:scale(.97)}
+.tool.full{grid-column:1/-1}
+.tool-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;margin-bottom:13px;
+  background:var(--grad-s);border:1px solid var(--faint)}
+.tool h3{font-family:'Sora';font-size:15px;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+.tool p{font-size:12.5px;color:var(--muted);line-height:1.45}
+.tool-glow{position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;
+  background:var(--grad);filter:blur(30px);opacity:.2;pointer-events:none}
+
+/* ── STATUS BAR ── */
+.status-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);
+  border:1.5px solid var(--faint);border-radius:13px;padding:12px 14px;margin-bottom:20px}
+.status-left{display:flex;align-items:center;gap:9px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:0 0 auto;transition:.3s}
+.status-dot.on{background:var(--good);box-shadow:0 0 8px var(--good)}
+.status-dot.err{background:var(--bad)}
+.status-txt{font-size:13px;font-weight:600;color:var(--text)}
+.status-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.test-btn{padding:9px 14px;border-radius:9px;background:var(--grad);color:#fff;font-size:12px;font-weight:700;white-space:nowrap;
+  font-family:'Sora';flex:0 0 auto}
+.test-btn:active{transform:scale(.96)}
+
+.divider{height:1px;background:var(--faint);margin:20px 0}
+
+/* ── PANEL ── */
+.panel{background:rgba(255,255,255,.04);border:1.5px solid var(--faint);border-radius:var(--r);padding:18px;margin-bottom:14px}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.chip-btn{padding:8px 14px;border-radius:30px;background:rgba(255,255,255,.05);border:1px solid var(--faint);
+  color:var(--muted);font-size:12.5px;transition:.15s}
+.chip-btn:active{transform:scale(.95);border-color:var(--b1);color:var(--text)}
+
+/* ── RESULT ── */
+.result-wrap{margin-top:16px;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--faint);
+  background:rgba(0,0,0,.3);min-height:120px;display:grid;place-items:center;position:relative}
+.result-wrap img,.result-wrap video{width:100%;display:block}
+.wm{position:absolute;right:11px;bottom:10px;font-family:'Sora';font-weight:800;font-size:14px;
+  color:rgba(255,255,255,.92);text-shadow:0 1px 6px rgba(0,0,0,.8);letter-spacing:.5px;pointer-events:none}
+.ph{padding:40px 20px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.6}
+
+.loading{display:flex;flex-direction:column;align-items:center;gap:16px;padding:36px 20px;text-align:center}
+.load-ring{width:52px;height:52px;border-radius:50%;border:3px solid var(--faint);border-top-color:var(--b1);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:13px;color:var(--muted)}
+.load-bar{width:160px;height:4px;border-radius:4px;background:var(--faint);overflow:hidden}
+.load-bar i{display:block;height:100%;width:40%;background:var(--grad);border-radius:4px;animation:sweep 1.3s ease-in-out infinite}
+@keyframes sweep{0%{transform:translateX(-160%)}100%{transform:translateX(400%)}}
+
+.upload-zone{border:1.5px dashed var(--faint);border-radius:14px;padding:26px 18px;text-align:center;
+  color:var(--muted);background:rgba(0,0,0,.2);cursor:pointer;transition:.2s}
+.upload-zone:active{border-color:var(--b1);background:rgba(79,142,255,.06)}
+.upload-zone b{color:var(--text);display:block;margin-bottom:3px;font-size:14px}
+.thumb{width:100%;border-radius:13px;margin-top:13px;border:1px solid var(--faint)}
+
+/* ── HIST ── */
+.hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hist-item{border-radius:14px;overflow:hidden;border:1.5px solid var(--faint);background:rgba(255,255,255,.04);position:relative}
+.hist-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.hist-meta{padding:8px 10px;font-size:11px;color:var(--muted);line-height:1.4}
+.hist-kind{position:absolute;top:8px;left:8px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  background:rgba(0,0,0,.65);padding:4px 8px;border-radius:20px;color:#fff}
+
+/* ── STATS ── */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{background:rgba(255,255,255,.04);border:1.5px solid var(--faint);border-radius:14px;padding:14px 10px;text-align:center}
+.stat b{display:block;font-family:'Sora';font-size:22px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+.user-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--faint)}
+.user-row:last-child{border-bottom:none}
+.ava{width:38px;height:38px;border-radius:12px;background:var(--grad-s);border:1.5px solid var(--faint);
+  display:grid;place-items:center;font-family:'Sora';font-weight:800;font-size:15px;flex:0 0 auto}
+.user-info{flex:1;min-width:0}
+.user-info b{font-size:14px;display:block}
+.user-info small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.badge-role{font-size:10px;background:rgba(79,142,255,.15);border:1px solid rgba(79,142,255,.3);
+  color:var(--b1);padding:3px 8px;border-radius:20px;font-weight:700;margin-left:6px}
+
+/* ── DIAG MODAL ── */
+.diag-modal{position:fixed;inset:0;z-index:80;background:rgba(3,6,14,.85);backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;padding:20px;animation:fadeUp .25s}
+.diag-card{width:100%;max-width:480px;background:var(--ink2);border:1.5px solid var(--faint);border-radius:22px;
+  padding:20px;box-shadow:var(--shadow)}
+.diag-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.diag-head h3{font-family:'Sora';font-size:17px;font-weight:800}
+.diag-close{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:17px;color:var(--muted)}
+.diag-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--faint)}
+.diag-item:last-child{border-bottom:none}
+.diag-ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;font-size:15px}
+.diag-ok{background:rgba(46,204,143,.12)}
+.diag-err{background:rgba(255,92,122,.12)}
+.diag-warn{background:rgba(255,184,0,.12)}
+.diag-info b{font-size:14px;display:block}
+.diag-info small{font-size:12px;color:var(--muted);display:block;margin-top:2px;line-height:1.4}
+.diag-loading{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+
+/* ── AD MODAL ── */
+.ad-modal{position:fixed;inset:0;z-index:85;background:rgba(3,6,14,.82);backdrop-filter:blur(7px);
+  display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .3s}
+.ad-card{width:100%;max-width:420px;background:var(--ink2);border:1.5px solid var(--faint);border-radius:22px;
+  overflow:hidden;box-shadow:var(--shadow)}
+.ad-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
+.ad-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700}
+.ad-skip-btn{font-size:12px;color:var(--muted);background:rgba(255,255,255,.07);border:1px solid var(--faint);
+  padding:7px 14px;border-radius:30px;min-width:80px;text-align:center;font-weight:600}
+.ad-skip-btn.ready{color:var(--text);cursor:pointer}
+.ad-list{padding:4px 14px 16px;display:flex;flex-direction:column;gap:10px}
+.ad-item{display:block;border-radius:16px;overflow:hidden;border:1px solid var(--faint);text-decoration:none;
+  transition:transform .15s;position:relative}
+.ad-item:active{transform:scale(.98)}
+.ad-banner{height:110px;display:flex;align-items:flex-end;padding:13px;position:relative}
+.ad-vh{background:linear-gradient(120deg,#0f2e28 0%,#0a1e1b 100%)}
+.ad-sml{background:linear-gradient(120deg,#1a1535 0%,#0e0d22 100%)}
+.ad-accent-vh{position:absolute;right:0;top:0;bottom:0;width:50%;background:radial-gradient(circle at 80% 30%,rgba(46,204,143,.4),transparent 65%)}
+.ad-accent-sml{position:absolute;right:0;top:0;bottom:0;width:50%;background:radial-gradient(circle at 80% 30%,rgba(79,142,255,.45),transparent 65%)}
+.ad-text{position:relative;z-index:1}
+.ad-tag{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:4px}
+.ad-title{font-family:'Sora';font-size:16px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.ad-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
+.ad-cta-btn{position:absolute;right:12px;bottom:12px;background:rgba(255,255,255,.95);color:#0a0f1e;
+  font-size:11.5px;font-weight:800;padding:7px 13px;border-radius:20px;font-family:'Sora';z-index:1}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;max-width:520px;margin:0 auto;
+  display:flex;background:rgba(9,14,28,.95);backdrop-filter:blur(20px);
+  border-top:1px solid var(--faint);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.nav button{flex:1;background:transparent;color:var(--muted);display:flex;flex-direction:column;
+  align-items:center;gap:4px;padding:7px 2px;font-size:10px;font-weight:700;border-radius:10px;
+  font-family:'Sora';letter-spacing:.3px;transition:.2s}
+.nav button.on{color:var(--text)}
+.nav button.on .nic{background:var(--grad-s);border-color:rgba(79,142,255,.3)}
+.nic{width:38px;height:34px;border-radius:11px;display:grid;place-items:center;border:1px solid transparent;transition:.2s}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:98px;left:50%;transform:translateX(-50%);z-index:100;
+  background:var(--ink2);border:1.5px solid var(--faint);color:var(--text);
+  padding:12px 20px;border-radius:30px;font-size:13.5px;font-weight:600;
+  box-shadow:var(--shadow);opacity:0;transition:.3s;max-width:88%;text-align:center;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-5px)}
+.toast.bad{border-color:var(--bad);color:var(--bad)}
+.toast.good{border-color:var(--good);color:var(--good)}
+
+svg{display:block}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">
+    <div class="splash-icon">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <path d="M10 26C10 17.163 17.163 10 26 10C30.418 10 34.418 11.791 37.314 14.686" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M42 26C42 34.837 34.837 42 26 42C21.582 42 17.582 40.209 14.686 37.314" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="3 4"/>
+        <circle cx="26" cy="26" r="7" fill="white"/>
+        <path d="M26 19V14M26 38V33M19 26H14M38 26H33" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="splash-wordmark">DedenAI</div>
+    <div class="splash-tag">Kreasi gambar & video dengan AI — gratis</div>
+  </div>
+  <button class="splash-btn" onclick="enterApp()">Mulai →</button>
+  <div class="splash-ver">v2.0 · KDM MAC</div>
+</div>
+
+<!-- AUTH -->
+<div id="auth" class="hidden">
+  <div id="authWrap">
+    <div class="auth-head">
+      <div class="auth-icon">
+        <svg width="36" height="36" viewBox="0 0 52 52" fill="none">
+          <path d="M10 26C10 17.163 17.163 10 26 10C30.418 10 34.418 11.791 37.314 14.686" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M42 26C42 34.837 34.837 42 26 42C21.582 42 17.582 40.209 14.686 37.314" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="3 4"/>
+          <circle cx="26" cy="26" r="7" fill="white"/>
+          <path d="M26 19V14M26 38V33M19 26H14M38 26H33" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="auth-name">DedenAI</div>
+      <div class="auth-sub">Platform kreasi AI gratis untuk semua</div>
+    </div>
+
+    <div class="seg">
+      <button id="segL" class="on" onclick="sw('login')">Masuk</button>
+      <button id="segR" onclick="sw('reg')">Daftar</button>
+    </div>
+
+    <div id="fLogin">
+      <div class="field"><label>Email</label><input id="lEmail" class="input" type="email" placeholder="email@kamu.com" autocomplete="email"/></div>
+      <div class="field"><label>Kata sandi</label><input id="lPass" class="input" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn btn-p" onclick="doLogin()">Masuk</button>
+      <div class="note-box">Admin bawaan: <b>admin@kdm.id</b> / <b>adminkdm</b></div>
+    </div>
+
+    <div id="fReg" class="hidden">
+      <div class="field"><label>Nama</label><input id="rName" class="input" type="text" placeholder="Nama kamu"/></div>
+      <div class="field"><label>Email</label><input id="rEmail" class="input" type="email" placeholder="email@kamu.com"/></div>
+      <div class="field"><label>Kata sandi</label><input id="rPass" class="input" type="password" placeholder="Minimal 4 karakter"/></div>
+      <button class="btn btn-p" onclick="doReg()">Buat Akun Gratis</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main" class="hidden">
+  <div class="app">
+
+    <div class="topbar">
+      <div class="top-logo">
+        <div class="top-icon">
+          <svg width="22" height="22" viewBox="0 0 52 52" fill="none">
+            <path d="M10 26C10 17.163 17.163 10 26 10C30.418 10 34.418 11.791 37.314 14.686" stroke="white" stroke-width="4" stroke-linecap="round"/>
+            <path d="M42 26C42 34.837 34.837 42 26 42C21.582 42 17.582 40.209 14.686 37.314" stroke="white" stroke-width="4" stroke-linecap="round" stroke-dasharray="3 5"/>
+            <circle cx="26" cy="26" r="7" fill="white"/>
+          </svg>
+        </div>
+        <div class="top-name">DedenAI</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="u-chip" id="uChip">—</div>
+    </div>
+
+    <!-- HOME -->
+    <div id="scHome" class="screen">
+      <div class="eyebrow">Studio</div>
+      <h1 class="page-title" id="greetTxt">Selamat datang 👋</h1>
+      <p class="page-desc">Buat gambar, ubah foto, jadikan video — semua gratis dengan AI.</p>
+
+      <div class="status-bar">
+        <div class="status-left">
+          <div class="status-dot" id="sDot"></div>
+          <div>
+            <div class="status-txt" id="sTxt">Mengecek koneksi…</div>
+            <div class="status-sub" id="sSub">DedenAI · Platform AI Gratis</div>
+          </div>
+        </div>
+        <button class="test-btn" onclick="runDiag()">Tes Koneksi</button>
+      </div>
+
+      <div class="tool-grid">
+        <button class="tool" onclick="go('create')">
+          <div class="tool-glow"></div>
+          <div class="tool-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4F8EFF" stroke-width="2" stroke-linecap="round">
+              <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2 2M16.4 16.4l2 2M18.4 5.6l-2 2M7.6 16.4l-2 2"/><circle cx="12" cy="12" r="3.5"/>
+            </svg>
+          </div>
+          <h3>Buat Gambar</h3>
+          <p>Ketik ide — AI langsung visualisasikan.</p>
+        </button>
+        <button class="tool" onclick="go('edit')">
+          <div class="tool-glow"></div>
+          <div class="tool-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+            </svg>
+          </div>
+          <h3>Ubah Gambar</h3>
+          <p>Upload foto, edit gaya & isinya.</p>
+        </button>
+        <button class="tool full" onclick="go('video')">
+          <div class="tool-glow"></div>
+          <div class="tool-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="14" height="14" rx="3"/><path d="m22 8-6 4 6 4Z"/>
+            </svg>
+          </div>
+          <h3>Gambar Jadi Video</h3>
+          <p>Tambah gerakan sinematik — ekspor sebagai video.</p>
+        </button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="row">
+        <button class="btn btn-g btn-sm" onclick="go('history')">📁 Riwayat</button>
+        <button class="btn btn-g btn-sm" onclick="go('account')">👤 Akun</button>
+      </div>
+    </div>
+
+    <!-- CREATE -->
+    <div id="scCreate" class="screen hidden">
+      <div class="eyebrow">Buat Gambar</div>
+      <h1 class="page-title">Wujudkan ide</h1>
+      <p class="page-desc">Deskripsikan gambar yang kamu mau. Makin detail, makin bagus.</p>
+      <div class="panel">
+        <div class="field"><label>Deskripsi gambar</label>
+          <textarea id="cgProm" class="input" placeholder="Contoh: foto produk mesin mixer stainless steel, latar pabrik modern, pencahayaan dramatis, 8K profesional"></textarea>
+        </div>
+        <div class="chips" id="cgChips"></div>
+        <button class="btn btn-g btn-sm" style="margin-top:13px" id="enhBtn" onclick="doEnhance()">✦ Perkaya deskripsi</button>
+        <div style="height:14px"></div>
+        <div class="row">
+          <div class="field" style="margin:0"><label>Ukuran</label>
+            <select id="cgRatio" class="input">
+              <option value="1024x1024">Kotak 1:1</option>
+              <option value="1024x1536">Potret 2:3</option>
+              <option value="1536x1024">Lanskap 3:2</option>
+              <option value="1080x1920">Story 9:16</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0"><label>Gaya</label>
+            <select id="cgStyle" class="input">
+              <option value="">Bebas</option>
+              <option value="realistic photo, sharp detail, 8k, professional">Realistis</option>
+              <option value="digital illustration, vibrant colors">Ilustrasi</option>
+              <option value="anime style, clean lineart">Anime</option>
+              <option value="3d render, cinematic lighting">3D</option>
+              <option value="watercolor, soft, artistic">Cat Air</option>
+              <option value="product photo, clean white background">Produk</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-p" onclick="doGenerate()">✦ Buat Gambar</button>
+      </div>
+      <div id="cgResult" class="result-wrap"><div class="ph">Hasil gambar muncul di sini</div></div>
+      <div id="cgActs" class="row hidden" style="margin-top:12px">
+        <button class="btn btn-g btn-sm" onclick="dlCurrent('cg')">⬇ Simpan</button>
+        <button class="btn btn-g btn-sm" onclick="toVid('cg')">🎬 Jadikan Video</button>
+      </div>
+    </div>
+
+    <!-- EDIT -->
+    <div id="scEdit" class="screen hidden">
+      <div class="eyebrow">Ubah Gambar</div>
+      <h1 class="page-title">Edit foto</h1>
+      <p class="page-desc">Upload gambar lalu ubah dengan AI — ganti gaya, background, atau objek.</p>
+      <div class="panel">
+        <input type="file" id="edFile" accept="image/*" class="hidden" onchange="loadEdFile(event)"/>
+        <div class="upload-zone" onclick="document.getElementById('edFile').click()">
+          <b>📷 Pilih gambar</b><span>Tap untuk ambil dari galeri atau kamera</span>
+        </div>
+        <img id="edPrev" class="thumb hidden"/>
+      </div>
+      <div id="edTools" class="hidden">
+        <div class="seg">
+          <button id="edSegAI" class="on" onclick="swEdit('ai')">Ubah dengan AI</button>
+          <button id="edSegAdj" onclick="swEdit('adj')">Atur Cepat</button>
+        </div>
+        <div id="edAI" class="panel">
+          <div class="field"><label>Instruksi perubahan</label>
+            <textarea id="edProm" class="input" placeholder="Contoh: ganti background jadi pantai senja, ubah jadi gaya cat minyak, tambahkan jas formal hitam"></textarea>
+          </div>
+          <div class="chips" id="edChips"></div>
+          <button class="btn btn-p" style="margin-top:14px" onclick="doEdit()">✦ Ubah dengan AI</button>
+        </div>
+        <div id="edAdj" class="panel hidden">
+          <div class="field"><label>Kecerahan</label><input id="adjB" type="range" min="50" max="150" value="100" style="width:100%" oninput="applyAdj()"/></div>
+          <div class="field"><label>Kontras</label><input id="adjC" type="range" min="50" max="150" value="100" style="width:100%" oninput="applyAdj()"/></div>
+          <div class="field"><label>Saturasi</label><input id="adjS" type="range" min="0" max="200" value="100" style="width:100%" oninput="applyAdj()"/></div>
+          <div class="field" style="margin:0"><label>Filter</label>
+            <select id="adjF" class="input" onchange="applyAdj()">
+              <option value="none">Tanpa filter</option><option value="grayscale">Hitam Putih</option>
+              <option value="sepia">Sepia</option><option value="warm">Hangat</option>
+              <option value="cool">Dingin</option><option value="vivid">Vivid</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="edResult" class="result-wrap hidden"></div>
+      <div id="edActs" class="row hidden" style="margin-top:12px">
+        <button class="btn btn-g btn-sm" onclick="dlCurrent('ed')">⬇ Simpan</button>
+        <button class="btn btn-g btn-sm" onclick="toVid('ed')">🎬 Jadikan Video</button>
+      </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div id="scVideo" class="screen hidden">
+      <div class="eyebrow">Gambar Jadi Video</div>
+      <h1 class="page-title">Hidupkan gambar</h1>
+      <p class="page-desc">Pilih efek gerakan, rekam sebagai video — download langsung.</p>
+      <div class="panel">
+        <input type="file" id="viFile" accept="image/*" class="hidden" onchange="loadVidFile(event)"/>
+        <div class="upload-zone" onclick="document.getElementById('viFile').click()">
+          <b>🖼 Pilih gambar</b><span>Atau kirim dari menu Buat / Ubah Gambar</span>
+        </div>
+        <canvas id="viCanvas" class="thumb hidden" style="background:#000"></canvas>
+      </div>
+      <div id="viTools" class="hidden">
+        <div class="panel">
+          <div class="field"><label>Efek gerakan</label>
+            <select id="viMot" class="input">
+              <option value="zoomin">Zoom Masuk</option><option value="zoomout">Zoom Keluar</option>
+              <option value="panr">Geser Kanan</option><option value="panl">Geser Kiri</option>
+              <option value="kenburns">Ken Burns</option><option value="pulse">Detak</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="field" style="margin:0"><label>Durasi</label>
+              <select id="viDur" class="input">
+                <option value="3">3 detik</option><option value="4" selected>4 detik</option>
+                <option value="6">6 detik</option><option value="8">8 detik</option>
+              </select>
+            </div>
+            <div class="field" style="margin:0"><label>Transisi</label>
+              <select id="viFade" class="input">
+                <option value="none">Tanpa</option><option value="fade" selected>Fade</option>
+              </select>
+            </div>
+          </div>
+          <button id="viBtn" class="btn btn-p" onclick="renderVid()">🎬 Buat Video</button>
+        </div>
+      </div>
+      <div id="viResult" class="result-wrap hidden"></div>
+      <div id="viActs" class="hidden" style="margin-top:12px">
+        <button class="btn btn-g btn-sm" onclick="dlVid()">⬇ Simpan Video</button>
+      </div>
+      <div class="note-box" style="margin-top:14px">Watermark KDM MAC otomatis menempel. Fitur video paling lancar di Chrome.</div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="scHistory" class="screen hidden">
+      <div class="eyebrow">Riwayat</div>
+      <h1 class="page-title">Karya kamu</h1>
+      <p class="page-desc">Gambar & video yang sudah dibuat.</p>
+      <div id="histGrid" class="hist-grid"></div>
+      <div id="histEmpty" class="ph hidden">Belum ada karya. Yuk mulai buat! ✦</div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div id="scAccount" class="screen hidden">
+      <div class="eyebrow">Akun</div>
+      <h1 class="page-title" id="acName">—</h1>
+      <p class="page-desc" id="acEmail">—</p>
+      <div class="panel">
+        <div class="user-row">
+          <div class="ava" id="acAva">D</div>
+          <div class="user-info"><b id="acName2">—</b><small id="acEmail2">—</small></div>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="stat"><b id="acImg">0</b><span>Gambar</span></div>
+          <div class="stat"><b id="acVid">0</b><span>Video</span></div>
+        </div>
+      </div>
+      <button id="acAdmin" class="btn btn-g hidden" style="margin-bottom:12px" onclick="go('admin')">🛠 Dashboard Admin</button>
+      <button class="btn btn-g" onclick="logout()">Keluar</button>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="scAdmin" class="screen hidden">
+      <div class="eyebrow">Backend</div>
+      <h1 class="page-title">Dashboard Admin</h1>
+      <p class="page-desc">Statistik & manajemen pengguna DedenAI.</p>
+      <div class="stat-row">
+        <div class="stat"><b id="stU">0</b><span>Pengguna</span></div>
+        <div class="stat"><b id="stI">0</b><span>Gambar</span></div>
+        <div class="stat"><b id="stV">0</b><span>Video</span></div>
+      </div>
+      <div class="stat-row" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><b id="stAC">0</b><span>Klik Iklan</span></div>
+        <div class="stat"><b id="stAV">0</b><span>Tayang Iklan</span></div>
+      </div>
+      <div class="panel">
+        <div class="eyebrow" style="margin-bottom:12px">Daftar Pengguna</div>
+        <div id="adminList"></div>
+      </div>
+      <button class="btn btn-g" onclick="go('account')">← Kembali</button>
+    </div>
+
+  </div><!-- /app -->
+
+  <!-- NAV -->
+  <div class="nav">
+    <button id="nHome" class="on" onclick="go('home')"><div class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>Beranda</button>
+    <button id="nCreate" onclick="go('create')"><div class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg></div>Buat</button>
+    <button id="nVideo" onclick="go('video')"><div class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="3"/><path d="m22 8-6 4 6 4Z"/></svg></div>Video</button>
+    <button id="nHist" onclick="go('history')"><div class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 3v18"/></svg></div>Riwayat</button>
+    <button id="nAcc" onclick="go('account')"><div class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></div>Akun</button>
+  </div>
+</div>
+
+<!-- DIAG MODAL -->
+<div id="diagModal" class="diag-modal hidden">
+  <div class="diag-card">
+    <div class="diag-head">
+      <h3>Tes Koneksi</h3>
+      <button class="diag-close" onclick="document.getElementById('diagModal').classList.add('hidden')">✕</button>
+    </div>
+    <div id="diagBody"><div class="diag-loading">Mengecek…<br><br><div class="load-ring" style="margin:0 auto"></div></div></div>
+  </div>
+</div>
+
+<!-- AD MODAL -->
+<div id="adModal" class="ad-modal hidden">
+  <div class="ad-card">
+    <div class="ad-top">
+      <div class="ad-label">Sponsor</div>
+      <div class="ad-skip-btn" id="adSkip">Tunggu 5</div>
+    </div>
+    <div class="ad-list">
+      <a class="ad-item" href="https://vision-house-showcase.lovable.app/services" target="_blank" rel="noopener" onclick="adClick()">
+        <div class="ad-banner ad-vh">
+          <div class="ad-accent-vh"></div>
+          <div class="ad-text"><div class="ad-tag">Vision Home Decor</div><div class="ad-title">Build Your Vision</div><div class="ad-sub">Kontraktor & desain interior</div></div>
+          <div class="ad-cta-btn">Lihat →</div>
+        </div>
+      </a>
+      <a class="ad-item" href="https://saranamultylogam50.netlify.app/#" target="_blank" rel="noopener" onclick="adClick()">
+        <div class="ad-banner ad-sml">
+          <div class="ad-accent-sml"></div>
+          <div class="ad-text"><div class="ad-tag">Sarana Multy Logam</div><div class="ad-title">Mesin Industri & Stainless</div><div class="ad-sub">Fabrikasi presisi untuk usaha Anda</div></div>
+          <div class="ad-cta-btn">Kunjungi →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ==============================================================
+   DedenAI  —  AI Kreatif Gratis
+   Engine: Netlify Function (API key tersembunyi) + fallback bebas
+============================================================== */
+const FN = '/.netlify/functions/kdm-engine';
+const WM_TEXT = 'KDM MAC';
+
+/* ── DB ── */
+const DB={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+function seed(){if(!DB.get('dai_users',null))DB.set('dai_users',[{id:'admin',nama:'Admin',email:'admin@kdm.id',pass:h('adminkdm'),role:'admin',at:Date.now()}]);if(!DB.get('dai_stats',null))DB.set('dai_stats',{img:0,vid:0,adC:0,adV:0});}
+function h(s){let x=5381;for(let i=0;i<s.length;i++)x=((x<<5)+x)+s.charCodeAt(i);return 'h'+(x>>>0).toString(36);}
+function me(){const id=DB.get('dai_sess',null);return DB.get('dai_users',[]).find(u=>u.id===id)||null;}
+function uid(){return 'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function histKey(){const u=me();return 'dai_h_'+(u?u.id:'x');}
+
+/* ── TOAST ── */
+let tt;
+function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className='toast show'+(t?' '+t:'');clearTimeout(tt);tt=setTimeout(()=>el.className='toast',2800);}
+
+/* ── FN CALL ── */
+async function fn(payload){
+  const r=await fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e;}
+  return r.json();
+}
+
+/* ── SPLASH ── */
+function enterApp(){const s=document.getElementById('splash');s.style.opacity='0';setTimeout(()=>{s.classList.add('hidden');me()?showMain():showAuth();},480);}
+
+/* ── AUTH ── */
+function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('main').classList.add('hidden');}
+function sw(m){const l=m==='login';document.getElementById('segL').classList.toggle('on',l);document.getElementById('segR').classList.toggle('on',!l);document.getElementById('fLogin').classList.toggle('hidden',!l);document.getElementById('fReg').classList.toggle('hidden',l);}
+function doReg(){const nm=document.getElementById('rName').value.trim(),em=document.getElementById('rEmail').value.trim().toLowerCase(),pw=document.getElementById('rPass').value;if(!nm||!em||!pw)return toast('Lengkapi semua data','bad');if(pw.length<4)return toast('Sandi minimal 4 karakter','bad');const us=DB.get('dai_users',[]);if(us.some(u=>u.email===em))return toast('Email sudah terdaftar','bad');const u={id:uid(),nama:nm,email:em,pass:h(pw),role:'user',at:Date.now()};us.push(u);DB.set('dai_users',us);DB.set('dai_sess',u.id);toast('Akun dibuat 🎉','good');showMain();}
+function doLogin(){const em=document.getElementById('lEmail').value.trim().toLowerCase(),pw=document.getElementById('lPass').value;if(!em||!pw)return toast('Isi email & sandi','bad');const u=DB.get('dai_users',[]).find(x=>x.email===em);if(!u||u.pass!==h(pw))return toast('Email atau sandi salah','bad');DB.set('dai_sess',u.id);toast('Selamat datang kembali!','good');showMain();}
+function logout(){DB.set('dai_sess',null);document.getElementById('main').classList.add('hidden');showAuth();sw('login');}
+
+/* ── MAIN ── */
+function showMain(){
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+  const u=me();
+  document.getElementById('uChip').textContent=u.nama.split(' ')[0];
+  document.getElementById('greetTxt').textContent='Halo, '+u.nama.split(' ')[0]+' 👋';
+  buildChips(); go('home'); showAd(); checkConn();
+}
+
+/* ── AD ── */
+function showAd(){const s=DB.get('dai_stats',{});s.adV=(s.adV||0)+1;DB.set('dai_stats',s);const m=document.getElementById('adModal');m.classList.remove('hidden');let n=5;const sk=document.getElementById('adSkip');sk.className='ad-skip-btn';sk.textContent='Tunggu '+n;sk.onclick=null;const iv=setInterval(()=>{n--;if(n<=0){clearInterval(iv);sk.className='ad-skip-btn ready';sk.textContent='Tutup ✕';sk.onclick=()=>m.classList.add('hidden');}else sk.textContent='Tunggu '+n;},1000);}
+function adClick(){const s=DB.get('dai_stats',{});s.adC=(s.adC||0)+1;DB.set('dai_stats',s);}
+
+/* ── CONN CHECK ── */
+async function checkConn(){
+  const dot=document.getElementById('sDot'),txt=document.getElementById('sTxt');
+  dot.className='status-dot';txt.textContent='Mengecek koneksi…';
+  try{
+    const d=await fn({mode:'status'});
+    if(d.hasGemini){dot.className='status-dot on';txt.textContent='AI Premium aktif';}
+    else{dot.className='status-dot';txt.textContent='Mode gratis aktif';}
+  }catch(e){
+    dot.className='status-dot';
+    txt.textContent=e.status===404?'Function belum aktif':'Mode gratis aktif';
+  }
+}
+
+/* ── DIAG ── */
+async function runDiag(){
+  const m=document.getElementById('diagModal'),b=document.getElementById('diagBody');
+  m.classList.remove('hidden');
+  b.innerHTML='<div class="diag-loading">Menguji koneksi…<br><br><div class="load-ring" style="margin:0 auto"></div></div>';
+  const items=[];
+  // 1. cek function
+  let fnOk=false,hasGemini=false,hasGroq=false,model='';
+  try{const d=await fn({mode:'status'});fnOk=true;hasGemini=d.hasGemini;hasGroq=d.hasGroq;model=d.model||'';}catch(e){items.push({ok:false,title:'Function server',desc:e.status===404?'Belum ke-deploy. Upload ulang ke Netlify via GitHub.':'Tidak bisa dihubungi (kode '+( e.status||'?')+')'});}
+  if(fnOk){
+    items.push({ok:true,title:'Function server',desc:'Berjalan di Netlify ✓'});
+    items.push({ok:hasGemini,warn:!hasGemini,title:'GEMINI_API_KEY',desc:hasGemini?'Terpasang ✓':'Belum ada — tambah di Netlify → Site settings → Environment variables, lalu Trigger deploy'});
+    items.push({ok:hasGroq,warn:!hasGroq,title:'GROQ_API_KEY (opsional)',desc:hasGroq?'Terpasang ✓':'Belum ada — opsional, untuk fitur Perkaya Deskripsi'});
+    // 2. uji Gemini nyata
+    if(hasGemini){
+      b.innerHTML='<div class="diag-loading">Menguji Gemini API…<br><br><div class="load-ring" style="margin:0 auto"></div></div>';
+      try{const d=await fn({mode:'diag'});
+        if(d.ok)items.push({ok:true,title:'Gemini API',desc:'Berhasil membuat gambar ✓ · '+d.model});
+        else items.push({ok:false,title:'Gemini API',desc:d.reason||'Gagal. Kemungkinan: key salah, kuota habis, atau nama model perlu diganti.'});
+      }catch(e){items.push({ok:false,title:'Gemini API',desc:'Error menghubungi Gemini.'});}
+    }
+  }
+  // render
+  b.innerHTML=items.map(i=>`
+    <div class="diag-item">
+      <div class="diag-ic ${i.ok?'diag-ok':i.warn?'diag-warn':'diag-err'}">${i.ok?'✓':i.warn?'!':'✕'}</div>
+      <div class="diag-info"><b>${esc(i.title)}</b><small>${esc(i.desc)}</small></div>
+    </div>`).join('');
+}
+
+/* ── NAV ── */
+const SCREENS=['home','create','edit','video','history','account','admin'];
+const NAV_MAP={home:'Home',create:'Create',edit:'Create',video:'Video',history:'Hist',account:'Acc',admin:'Acc'};
+function go(name){
+  SCREENS.forEach(s=>{const el=document.getElementById('sc'+s[0].toUpperCase()+s.slice(1));if(el)el.classList.toggle('hidden',s!==name);});
+  ['Home','Create','Video','Hist','Acc'].forEach(n=>{const b=document.getElementById('n'+n);if(b)b.classList.remove('on');});
+  const nb=document.getElementById('n'+NAV_MAP[name]);if(nb)nb.classList.add('on');
+  window.scrollTo(0,0);
+  if(name==='history')renderHist();
+  if(name==='account')renderAcc();
+  if(name==='admin')renderAdmin();
+}
+
+/* ── ENGINE ── */
+function polUrl(p,ratio){const[w,h]=(ratio||'1024x1024').split('x').map(Number);const s=Math.floor(Math.random()*1e6);return'https://image.pollinations.ai/prompt/'+encodeURIComponent(p)+'?width='+w+'&height='+h+'&seed='+s+'&nologo=true&model=flux';}
+function loadImage(src,cors){return new Promise((res,rej)=>{const i=new Image();if(cors)i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=()=>rej(new Error('img'));i.src=src;});}
+
+function burnWatermark(img){
+  const W=img.naturalWidth||img.width,H=img.naturalHeight||img.height;
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d');x.drawImage(img,0,0,W,H);
+  const pad=Math.round(W*.028),fs=Math.max(16,Math.round(W*.045));
+  x.font='800 '+fs+'px Sora,sans-serif';x.textBaseline='alphabetic';x.textAlign='right';
+  x.shadowColor='rgba(0,0,0,.65)';x.shadowBlur=fs*.5;x.shadowOffsetY=1;
+  x.fillStyle='rgba(255,255,255,.92)';x.fillText(WM_TEXT,W-pad,H-pad);
+  return c.toDataURL('image/jpeg',.92);
+}
+async function watermark(src){
+  try{const img=await loadImage(src,true);return{url:burnWatermark(img),baked:true};}
+  catch(e){
+    if(/^https?:/.test(src)){
+      try{const d=await fn({mode:'proxy',url:src});const img=await loadImage('data:'+d.mime+';base64,'+d.image,false);return{url:burnWatermark(img),baked:true};}catch(e2){}
+    }
+    return{url:src,baked:false};
+  }
+}
+async function engineGen(prompt,ratio){
+  let src=null;
+  try{const d=await fn({mode:'generate',prompt});if(d&&d.image)src='data:'+(d.mime||'image/png')+';base64,'+d.image;}catch(e){}
+  if(!src)src=polUrl(prompt,ratio);
+  const wm=await watermark(src);return{url:wm.url,baked:wm.baked,raw:src};
+}
+async function engineEdit(srcData,desc){
+  let out=null;
+  try{const base=srcData.split(',')[1],mime=srcData.substring(5,srcData.indexOf(';'))||'image/png';const d=await fn({mode:'edit',prompt:desc,image:base,imageMime:mime});if(d&&d.image)out='data:'+(d.mime||'image/png')+';base64,'+d.image;}catch(e){}
+  if(!out)out=polUrl('edit: '+desc+', high quality',  '1024x1024');
+  const wm=await watermark(out);return{url:wm.url,baked:wm.baked,raw:out};
+}
+
+function loadingHTML(){return'<div class="loading"><div class="load-ring"></div><div class="load-txt">DedenAI sedang berkreasi…</div><div class="load-bar"><i></i></div></div>';}
+function showImg(boxId,res){const box=document.getElementById(boxId);box.classList.remove('hidden');box.innerHTML='';const im=new Image();im.src=res.url;box.appendChild(im);if(!res.baked){const w=document.createElement('div');w.className='wm';w.textContent=WM_TEXT;box.appendChild(w);}}
+
+/* ── CHIPS ── */
+function buildChips(){
+  const gi=['Produk profesional','Mesin industri','Suasana senja','Background putih','Cinematic','Minimalis'];
+  const ei=['Ganti background','Jadi cat minyak','Warna lebih cerah','Gaya vintage','Tambah pencahayaan','Lebih tajam'];
+  const cg=document.getElementById('cgChips');cg.innerHTML='';
+  gi.forEach(t=>{const b=document.createElement('button');b.className='chip-btn';b.textContent='+'+t;b.onclick=()=>{const ta=document.getElementById('cgProm');ta.value=(ta.value?ta.value+', ':'')+t.toLowerCase();};cg.appendChild(b);});
+  const ec=document.getElementById('edChips');ec.innerHTML='';
+  ei.forEach(t=>{const b=document.createElement('button');b.className='chip-btn';b.textContent='+'+t;b.onclick=()=>{const ta=document.getElementById('edProm');ta.value=(ta.value?ta.value+', ':'')+t.toLowerCase();};ec.appendChild(b);});
+}
+
+/* ── ENHANCE ── */
+async function doEnhance(){
+  const ta=document.getElementById('cgProm'),p=ta.value.trim();
+  if(!p)return toast('Tulis ide dasarnya dulu','bad');
+  const btn=document.getElementById('enhBtn');btn.disabled=true;btn.textContent='⏳ Memproses…';
+  try{const d=await fn({mode:'enhance',prompt:p});if(d&&d.text&&d.text!==p){ta.value=d.text;toast('Deskripsi diperkaya ✦','good');}else toast('Fitur ini perlu GROQ_API_KEY','bad');}
+  catch(e){toast('Perlu server aktif','bad');}
+  btn.disabled=false;btn.textContent='✦ Perkaya deskripsi';
+}
+
+/* ── GENERATE ── */
+let cur={cg:null,ed:null};
+async function doGenerate(){
+  let p=document.getElementById('cgProm').value.trim();if(!p)return toast('Tulis deskripsinya dulu','bad');
+  const st=document.getElementById('cgStyle').value,ra=document.getElementById('cgRatio').value;
+  if(st)p+=', '+st;
+  document.getElementById('cgActs').classList.add('hidden');
+  const box=document.getElementById('cgResult');box.classList.remove('hidden');box.innerHTML=loadingHTML();
+  try{const res=await engineGen(p,ra);cur.cg=res;showImg('cgResult',res);document.getElementById('cgActs').classList.remove('hidden');await saveHist('image',res.url,p);toast('Gambar selesai ✦','good');}
+  catch(e){box.innerHTML='<div class="ph">Gagal membuat gambar. Coba lagi.</div>';toast('Gagal','bad');}
+}
+
+/* ── EDIT ── */
+let edSrc=null;
+function loadEdFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{edSrc=r.result;const p=document.getElementById('edPrev');p.src=edSrc;p.classList.remove('hidden');document.getElementById('edTools').classList.remove('hidden');['adjB','adjC','adjS'].forEach(id=>document.getElementById(id).value=100);document.getElementById('adjF').value='none';};r.readAsDataURL(f);}
+function swEdit(m){document.getElementById('edSegAI').classList.toggle('on',m==='ai');document.getElementById('edSegAdj').classList.toggle('on',m==='adj');document.getElementById('edAI').classList.toggle('hidden',m!=='ai');document.getElementById('edAdj').classList.toggle('hidden',m!=='adj');if(m==='adj')applyAdj();}
+async function doEdit(){
+  const desc=document.getElementById('edProm').value.trim();if(!desc)return toast('Tulis instruksinya dulu','bad');if(!edSrc)return toast('Pilih gambar dulu','bad');
+  document.getElementById('edActs').classList.add('hidden');
+  const box=document.getElementById('edResult');box.classList.remove('hidden');box.innerHTML=loadingHTML();
+  try{const res=await engineEdit(edSrc,desc);cur.ed=res;showImg('edResult',res);document.getElementById('edActs').classList.remove('hidden');await saveHist('image',res.url,'Edit: '+desc);toast('Gambar diubah ✦','good');}
+  catch(e){box.innerHTML='<div class="ph">Gagal mengubah gambar. Coba lagi.</div>';toast('Gagal','bad');}
+}
+const FILT={none:'',grayscale:'grayscale(1)',sepia:'sepia(.7)',warm:'sepia(.3) saturate(1.4) hue-rotate(-10deg)',cool:'saturate(1.2) hue-rotate(20deg)',vivid:'saturate(1.6) contrast(1.1)'};
+function applyAdj(){if(!edSrc)return;const b=document.getElementById('adjB').value,c=document.getElementById('adjC').value,s=document.getElementById('adjS').value,fl=FILT[document.getElementById('adjF').value]||'';const img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=img.width;cv.height=img.height;const ctx=cv.getContext('2d');ctx.filter=('brightness('+b+'%) contrast('+c+'%) saturate('+s+'%) '+fl).trim();ctx.drawImage(img,0,0);const out=new Image();out.onload=()=>{const url=burnWatermark(out);cur.ed={url,baked:true,raw:url};showImg('edResult',cur.ed);document.getElementById('edActs').classList.remove('hidden');};out.src=cv.toDataURL('image/jpeg',.92);};img.src=edSrc;}
+
+/* ── DOWNLOAD ── */
+function dl(url,name){const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Tersimpan ⬇');}
+function dlCurrent(k){const r=cur[k];if(!r)return;dl(r.url,'dedenai-'+k+'-'+Date.now()+'.jpg');}
+function toVid(k){const r=cur[k];if(!r)return;go('video');setVidSrc(r.url);}
+
+/* ── VIDEO ── */
+let viImg=null,viBlobUrl=null;
+function loadVidFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setVidSrc(r.result);r.readAsDataURL(f);}
+async function setVidSrc(src){
+  let clean=src;
+  if(/^https?:/.test(src)){const wm=await watermark(src);if(wm.baked)clean=wm.url;}
+  const img=new Image();
+  img.onload=()=>{viImg=img;const cv=document.getElementById('viCanvas');const W=720,H=Math.round(720*img.height/img.width);cv.width=W;cv.height=H;cv.classList.remove('hidden');cv.getContext('2d').drawImage(img,0,0,W,H);document.getElementById('viTools').classList.remove('hidden');document.getElementById('viResult').classList.add('hidden');document.getElementById('viActs').classList.add('hidden');};
+  img.onerror=()=>toast('Gagal memuat gambar','bad');img.src=clean;
+}
+function eio(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function vidWM(ctx,W,H){const pad=Math.round(W*.028),fs=Math.max(14,Math.round(W*.04));ctx.save();ctx.font='800 '+fs+'px Sora,sans-serif';ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=fs*.5;ctx.shadowOffsetY=1;ctx.fillStyle='rgba(255,255,255,.92)';ctx.fillText(WM_TEXT,W-pad,H-pad);ctx.restore();}
+function renderVid(){
+  if(!viImg)return toast('Pilih gambar dulu','bad');
+  const cv=document.getElementById('viCanvas'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const mot=document.getElementById('viMot').value,dur=parseFloat(document.getElementById('viDur').value),fade=document.getElementById('viFade').value==='fade';
+  const btn=document.getElementById('viBtn');btn.disabled=true;btn.textContent='⏺ Merekam…';
+  let stream;try{stream=cv.captureStream(30);}catch(e){btn.disabled=false;btn.textContent='🎬 Buat Video';return toast('Pakai Chrome untuk fitur ini','bad');}
+  let mime='video/webm;codecs=vp9';if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
+  let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000});}catch(e){btn.disabled=false;btn.textContent='🎬 Buat Video';return toast('Browser tidak mendukung perekaman','bad');}
+  const chunks=[];rec.ondataavailable=ev=>{if(ev.data.size)chunks.push(ev.data);};
+  rec.onstop=async()=>{const blob=new Blob(chunks,{type:'video/webm'});if(viBlobUrl)URL.revokeObjectURL(viBlobUrl);viBlobUrl=URL.createObjectURL(blob);const box=document.getElementById('viResult');box.classList.remove('hidden');box.innerHTML='';const v=document.createElement('video');v.src=viBlobUrl;v.controls=true;v.autoplay=true;v.loop=true;v.playsInline=true;box.appendChild(v);document.getElementById('viActs').classList.remove('hidden');btn.disabled=false;btn.textContent='🎬 Buat Video';await saveHist('video','','Video '+mot);toast('Video selesai 🎬','good');};
+  const start=performance.now(),total=dur*1000;rec.start();
+  function frame(now){let t=(now-start)/total;if(t>1)t=1;const e=eio(t);ctx.clearRect(0,0,W,H);ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);let scale=1,dx=0,dy=0;const Z=.18;if(mot==='zoomin')scale=1+Z*e;else if(mot==='zoomout')scale=1+Z*(1-e);else if(mot==='panr'){scale=1+Z;dx=-(W*Z)*e;}else if(mot==='panl'){scale=1+Z;dx=-(W*Z)*(1-e);}else if(mot==='kenburns'){scale=1+Z*e;dx=-(W*.1)*e;dy=-(H*.06)*e;}else if(mot==='pulse')scale=1+.05*Math.sin(e*Math.PI*2);const dw=W*scale,dh=H*scale,ox=(W-dw)/2+dx,oy=(H-dh)/2+dy;ctx.drawImage(viImg,ox,oy,dw,dh);vidWM(ctx,W,H);if(fade){let a=0;if(t<.15)a=1-(t/.15);else if(t>.85)a=(t-.85)/.15;if(a>0){ctx.fillStyle='rgba(0,0,0,'+a+')';ctx.fillRect(0,0,W,H);}}if(t<1)requestAnimationFrame(frame);else setTimeout(()=>rec.stop(),120);}
+  requestAnimationFrame(frame);
+}
+function dlVid(){if(!viBlobUrl)return;dl(viBlobUrl,'dedenai-video-'+Date.now()+'.webm');}
+
+/* ── HISTORY ── */
+function thumb(src,max){return new Promise(res=>{if(!src)return res('');const i=new Image();i.onload=()=>{const r=Math.min(1,max/Math.max(i.width,i.height));const c=document.createElement('canvas');c.width=Math.round(i.width*r);c.height=Math.round(i.height*r);c.getContext('2d').drawImage(i,0,0,c.width,c.height);try{res(c.toDataURL('image/jpeg',.6));}catch(e){res('');}};i.onerror=()=>res('');i.src=src;});}
+async function saveHist(kind,src,label){
+  const t=kind==='image'?await thumb(src,300):'';
+  const arr=DB.get(histKey(),[]);arr.unshift({kind,t,label,at:Date.now()});if(arr.length>40)arr.length=40;
+  let ok=true;try{DB.set(histKey(),arr);}catch(e){ok=false;}
+  if(!ok&&arr.length>1){arr.length=Math.max(1,arr.length-5);try{DB.set(histKey(),arr);}catch(e){}}
+  const s=DB.get('dai_stats',{});if(kind==='image')s.img=(s.img||0)+1;else s.vid=(s.vid||0)+1;DB.set('dai_stats',s);
+}
+function renderHist(){
+  const arr=DB.get(histKey(),[]),grid=document.getElementById('histGrid'),empty=document.getElementById('histEmpty');
+  grid.innerHTML='';if(!arr.length){empty.classList.remove('hidden');return;}empty.classList.add('hidden');
+  arr.forEach(item=>{const d=document.createElement('div');d.className='hist-item';
+    if(item.kind==='image'&&item.t)d.innerHTML='<div class="hist-kind">🖼 Gambar</div><img src="'+item.t+'" loading="lazy"/><div class="hist-meta">'+esc(item.label||'')+'</div>';
+    else d.innerHTML='<div class="hist-kind">'+(item.kind==='video'?'🎬 Video':'📁')+'</div><div style="aspect-ratio:1;display:grid;place-items:center;background:rgba(79,142,255,.07);color:var(--muted);font-size:11px;text-align:center;padding:10px">'+(item.kind==='video'?'Video':'—')+'</div><div class="hist-meta">'+esc(item.label||'')+'</div>';
+    grid.appendChild(d);});
+}
+
+/* ── ACCOUNT ── */
+function renderAcc(){
+  const u=me();if(!u)return;
+  document.getElementById('acName').textContent=u.nama;document.getElementById('acEmail').textContent=u.email;
+  document.getElementById('acName2').textContent=u.nama;document.getElementById('acEmail2').textContent=u.email;
+  document.getElementById('acAva').textContent=(u.nama[0]||'D').toUpperCase();
+  const arr=DB.get(histKey(),[]);
+  document.getElementById('acImg').textContent=arr.filter(h=>h.kind==='image').length;
+  document.getElementById('acVid').textContent=arr.filter(h=>h.kind==='video').length;
+  document.getElementById('acAdmin').classList.toggle('hidden',u.role!=='admin');
+}
+
+/* ── ADMIN ── */
+function renderAdmin(){
+  const u=me();if(!u||u.role!=='admin'){toast('Khusus admin','bad');return go('account');}
+  const users=DB.get('dai_users',[]),s=DB.get('dai_stats',{});
+  document.getElementById('stU').textContent=users.length;
+  document.getElementById('stI').textContent=s.img||0;
+  document.getElementById('stV').textContent=s.vid||0;
+  document.getElementById('stAC').textContent=s.adC||0;
+  document.getElementById('stAV').textContent=s.adV||0;
+  const box=document.getElementById('adminList');box.innerHTML='';
+  users.slice().reverse().forEach(x=>{const row=document.createElement('div');row.className='user-row';
+    const d=new Date(x.at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+    row.innerHTML='<div class="ava">'+(x.nama[0]||'?').toUpperCase()+'</div><div class="user-info"><b>'+esc(x.nama)+(x.role==='admin'?'<span class="badge-role">admin</span>':'')+'</b><small>'+esc(x.email)+' · '+d+'</small></div>';
+    box.appendChild(row);});
+}
+
+function esc(s){return(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+
+seed();
+</script>
+</body>
+</html>
